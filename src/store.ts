@@ -123,10 +123,12 @@ export function createApolloStore({
     enhancers.push(applyMiddleware(crashReporter));
   }
 
+  const [first, ...rest] = enhancers; // XXX see why it's needed
+
   return createStore(
-    combineReducers({ [reduxRootKey]: createApolloReducer(config) }),
+    combineReducers({ [reduxRootKey]: createApolloReducer(config) as any }), // XXX see why this type fails
     initialState,
-    compose(...enhancers) as () => any // XXX see why this type fails
+    compose(first, ...rest) as () => any // XXX see why this type fails
   );
 }
 
